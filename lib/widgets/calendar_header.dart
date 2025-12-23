@@ -7,6 +7,63 @@ class CalendarHeader extends StatelessWidget {
 
   const CalendarHeader({super.key, required this.controller});
 
+  void _showYearPicker(BuildContext context) {
+    final controller = this.controller;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        int tempYear = controller.model.year;
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Выбор года'),
+              content: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      setState(() {
+                        tempYear--;
+                      });
+                    },
+                  ),
+                  Text(
+                    tempYear.toString(),
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      setState(() {
+                        tempYear++;
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Отмена'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    controller.setYear(tempYear);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final monthName = [
@@ -35,7 +92,16 @@ class CalendarHeader extends StatelessWidget {
         Column(
           children: [
             Text(monthName, style: const TextStyle(fontSize: 18)),
-            Text(controller.model.year.toString()),
+            GestureDetector(
+              onTap: () => _showYearPicker(context),
+              child: Text(
+                controller.model.year.toString(),
+                style: const TextStyle(
+                  fontSize: 16,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
           ],
         ),
         IconButton(
