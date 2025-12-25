@@ -19,9 +19,12 @@ class CalendarScreen extends StatelessWidget {
           CalendarHeader(controller: controller),
           CalendarGrid(model: controller.model),
           if (!controller.isCurrentMonth)
-            ElevatedButton(
-              onPressed: controller.goToToday,
-              child: const Text('Вернуться к текущему месяцу'),
+            Padding(
+              padding: const EdgeInsets.only(top: 16, bottom: 24),
+              child: ElevatedButton(
+                onPressed: controller.goToToday,
+                child: const Text('Вернуться к текущему месяцу'),
+              ),
             ),
         ],
       ),
