@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
       body: ListView(
         children: QuantityType.values.map((type) {
           return ListTile(
-            title: Text(type.name),
+            title: Text(type.title),
             onTap: () {
               Navigator.push(
                 context,

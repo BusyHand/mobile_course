@@ -1,7 +1,11 @@
 enum QuantityType {
-  length,
-  weight,
-  temperature,
-  area,
-  currency,
+  length('Длина'),
+  weight('Вес'),
+  temperature('Температура'),
+  area('Площадь'),
+  currency('Валюта');
+
+  final String title;
+
+  const QuantityType(this.title);
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/quantity_type.dart';
 import '../models/unit.dart';
@@ -31,6 +32,16 @@ class _ConverterScreenState extends State<ConverterScreen> {
     to = strategy.getUnits()[1];
   }
 
+  String formatResult(double value) {
+    if (value % 1 == 0) {
+      return value.toInt().toString();
+    }
+    return value
+        .toStringAsFixed(4)
+        .replaceAll(RegExp(r'0+$'), '')
+        .replaceAll('.', '.');
+  }
+
   void swap() {
     setState(() {
       final temp = from;
@@ -48,31 +59,64 @@ class _ConverterScreenState extends State<ConverterScreen> {
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.type.name)),
-      body: Column(
-        children: [
-          TextField(
-            keyboardType: TextInputType.number,
-            onChanged: (v) => setState(() => input = v),
-          ),
-          DropdownButton<Unit>(
-            value: from,
-            items: strategy
-                .getUnits()
-                .map((u) => DropdownMenuItem(value: u, child: Text(u.symbol)))
-                .toList(),
-            onChanged: (v) => setState(() => from = v!),
-          ),
-          IconButton(icon: const Icon(Icons.swap_vert), onPressed: swap),
-          DropdownButton<Unit>(
-            value: to,
-            items: strategy
-                .getUnits()
-                .map((u) => DropdownMenuItem(value: u, child: Text(u.symbol)))
-                .toList(),
-            onChanged: (v) => setState(() => to = v!),
-          ),
-          if (result != null) Text('Result: $result'),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 24),
+
+            // INPUT
+            TextField(
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+              ],
+              onChanged: (v) => setState(() => input = v),
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 28),
+              decoration: const InputDecoration(
+                hintText: '0',
+                border: InputBorder.none,
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // FROM
+            DropdownButton<Unit>(
+              value: from,
+              items: strategy
+                  .getUnits()
+                  .map((u) => DropdownMenuItem(value: u, child: Text(u.symbol)))
+                  .toList(),
+              onChanged: (v) => setState(() => from = v!),
+            ),
+            IconButton(icon: const Icon(Icons.swap_vert), onPressed: swap),
+
+            // TO
+            DropdownButton<Unit>(
+              value: to,
+              items: strategy
+                  .getUnits()
+                  .map((u) => DropdownMenuItem(value: u, child: Text(u.symbol)))
+                  .toList(),
+              onChanged: (v) => setState(() => to = v!),
+            ),
+
+            const SizedBox(height: 24),
+            if (result != null)
+              Text(
+                'Result: ${formatResult(result)}',
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
